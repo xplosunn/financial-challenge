@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mysql:
+    image: "mysql"
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+    - "3306:3306"
+  web:
+    build:
+      context: .
+      args:
+        JAR_FILE: "target/financial-challenge-0.0.1-SNAPSHOT.jar"
+    ports:
+    - "8080:8080"

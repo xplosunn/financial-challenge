@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>Transaction History</title>
+</head>
+<body>
+
+<div>
+    <p>User:</p>
+    <label class="col-md-1">
+        <input type="number" id="input-user" class="form-control" value=1>
+    </label>
+</div>
+
+<div>
+    <p>See data for</p>
+    <button onclick="callBackend(1)">Today</button>
+    <button onclick="callBackend(3)">Last 3 days</button>
+    <button onclick="callBackend(7)">Last 7 days</button>
+    <button onclick="callBackend(30)">Last 30 days</button>
+</div>
+
+<div>
+    <p>Amount filters:</p>
+    <div class="row">
+        <div class="col-md-1"> > </div>
+        <label class="col-md-1">
+            <input type="text" class="form-control" id = "biggerThan">
+        </label>
+    </div>
+    <div class="row">
+        <div class="col-md-1"> < </div>
+        <label class="col-md-1">
+            <input type="text" class="form-control" id = "lowerThan">
+        </label>
+    </div>
+    <div class="row">
+        <div class="col-md-1"> = </div>
+        <label class="col-md-1">
+            <input type="text" class="form-control" id = "equal">
+        </label>
+    </div>
+</div>
+
+<div>
+    <p>Transaction total: <span id="total" n></span></p>
+</div>
+
+<table class="table col-md-6 mx-auto">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">amount</th>
+        <th scope="col">timestamp</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+<script>
+  function callBackend(days) {
+    var tbody = $("tbody");
+    tbody.empty();
+
+    var total = 0;
+
+    var userId = parseInt($("#input-user").val());
+
+    var queryParams = [];
+
+    var biggerThan = $("#biggerThan").val();
+    if(biggerThan && biggerThan.trim() !== "") {
+      queryParams.push("biggerThan=" + biggerThan);
+    }
+    var lowerThan = $("#lowerThan").val();
+    if(lowerThan && lowerThan.trim() !== "") {
+      queryParams.push("lowerThan=" + lowerThan);
+    }
+    var equal = $("#equal").val();
+    if(equal && equal.trim() !== "") {
+      queryParams.push("equal=" + equal);
+    }
+
+    var queryParamsStr = "?days=" + days;
+
+    for (var i = 0; i < queryParams.length; i++) {
+      queryParamsStr = queryParamsStr + "&" + queryParams[i];
+    }
+
+    var url = "user/" + userId + "/history" + queryParamsStr;
+
+    $.getJSON(url, function(data) {
+      $.each(data, function(key, val) {
+        total = total + val.amount;
+        var tr = $('<tr>').appendTo(tbody);
+        tr.append('<td scope="row">' + val.id + '</td>');
+        tr.append('<td>' + val.amount + '</td>');
+        tr.append('<td>' + val.timestamp + '</td>');
+      });
+      $("#total").text(total);
+    });
+  }
+</script>
+</body>
+</html>
