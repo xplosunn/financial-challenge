@@ -18,7 +18,7 @@ Then you can run the dockers with:
 docker-compose up -d
 ````
 
-After everything boots, you should have the app working on localhost:8080
+After everything boots, you should have the app working on localhost:8080/index.html
 
 ## Requested tools
 * Docker
